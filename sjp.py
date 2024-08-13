@@ -7,10 +7,9 @@ import json
 import urllib.parse
 
 
-
 class SJP:
-    def __init__(self):
-        self.sess = aiohttp.ClientSession()
+    def __init__(self, sess: aiohttp.ClientSession):
+        self.sess = sess
 
     async def close(self):
         await self.sess.close()

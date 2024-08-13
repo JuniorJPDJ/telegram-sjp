@@ -16,5 +16,8 @@
       "groupName": "OS Packages"
     }
   ],
+  "ignoreDeps": [
+    "ghcr.io/juniorjpdj/telegram-sjp"
+  ],
   "forkProcessing": "enabled"
 }

@@ -1,8 +1,10 @@
 services:
   telegram-sjp:
+    # build: .
+    image: ghcr.io/juniorjpdj/telegram-sjp
+    restart: unless-stopped
+    env_file: .env
     # environment:
     #   API_ID:
     #   API_HASH:
     #   BOT_TOKEN:
-    env_file: .env
-    build: .
