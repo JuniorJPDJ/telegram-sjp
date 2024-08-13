@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/juniorjpdj/telegram-sjp
   pullPolicy: Always
-  tag: latest
+  tag: latest@sha256:abb6320b535bcbce0e4cc954cb069c3b3e55e2d21a88cef8e4cb1c9bbaa711b0
 
 imagePullSecrets: []
 nameOverride: ""
