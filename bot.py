@@ -17,36 +17,36 @@ async def main():
     await bot.start(bot_token=args.bot_token)
 
     async with aiohttp.ClientSession() as sess:
-        sjp_obj = sjp.SJP(sess)
+        sjp_ = sjp.SJP(sess)
 
-        # inline version
         @bot.on(events.InlineQuery)
-        async def handler(event):
+        async def inline_handler(event):
             if not event.text:
                 return
             builder = event.builder
-            d = await sjp_obj.get_definition(event.text)
-            autocomplete = await sjp_obj.get_autocomplete(event.text)
-            if d is not None:
-                await event.answer([builder.article(d, text=d)])
+            definition, autocomplete = await asyncio.gather(
+                sjp_.get_definition(event.text),
+                sjp_.get_autocomplete(event.text),
+            )
+            if definition is not None:
+                await event.answer([builder.article(definition, text=definition)])
             else:
                 if len(autocomplete):
                     autocomplete = autocomplete[:10]
-                    done, _ = await asyncio.wait([asyncio.create_task(sjp_obj.get_definition(x)) for x in autocomplete], timeout=5)
+                    done, _ = await asyncio.wait([asyncio.create_task(sjp_.get_definition(x)) for x in autocomplete], timeout=5)
                     results = [d.result() for d in done]
                     k = [builder.article(a, text=a) for a in results if a is not None]
                     await event.answer(k[:2])
 
-        # standard version
         @bot.on(events.NewMessage)
-        async def my_event_handler(event):
+        async def message_handler(event):
             chat = await event.get_chat()
-            d = await sjp_obj.get_definition(event.raw_text)
+            d = await sjp_.get_definition(event.raw_text)
             if d is not None:
                 await event.reply(d)
             else:
                 await event.reply('Nie znalazłem definicji')
-                autocomplete = await sjp_obj.get_autocomplete(event.raw_text)
+                autocomplete = await sjp_.get_autocomplete(event.raw_text)
                 suggestions = ''
                 if autocomplete:
                     for w in autocomplete:
