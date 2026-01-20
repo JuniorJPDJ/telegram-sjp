@@ -3,7 +3,6 @@ class for taking words' definitions from sjp.pwn.pl
 '''
 import aiohttp
 from bs4 import BeautifulSoup
-import json
 import urllib.parse
 
 
@@ -21,10 +20,9 @@ class SJP:
         await self.close()
 
     async def get_autocomplete(self, query):
-        async with self.sess.get('https://sjp.pwn.pl/complete.php?source=autocomplete-sjp&query=' + urllib.parse.quote_plus(query)) as r:
-            txt = await r.text()
-            js = json.loads(txt)
-            return [i['value'] for i in js]
+        async with self.sess.get('https://sjp.pwn.pl/api/autocomplete', params={'query': query}) as r:
+            completions = await r.json()['hits']['hits']
+            return [item['_source']['title'] for item in completions]
 
     async def get_definition(self, word):
         async with self.sess.get('https://sjp.pwn.pl/szukaj/' + urllib.parse.quote_plus(word) + '.html') as r:
